@@ -85,39 +85,17 @@ conda env create -f environment.yml
 conda activate splatam
 ``` -->
 
-#### Windows
-
-For installation on Windows using Git bash, please refer to the [instructions shared in Issue#9](https://github.com/spla-tam/SplaTAM/issues/9#issuecomment-1848348403).
-
-#### Docker and Singularity Setup
+#### Docker Setup
 
 We also provide a docker image. We recommend using a venv to run the code inside a docker image:
 
 
 ```bash
-docker pull nkeetha/splatam:v1
-bash bash_scripts/start_docker.bash
-cd /SplaTAM/
-pip install virtualenv --user
-mkdir venv
-cd venv
-virtualenv --system-site-packages splatam
-source ./splatam/bin/activate
-pip install -r venv_requirements.txt
-```
-
-Setting up a singularity container is similar:
-```bash
-cd </path/to/singularity/folder/>
-singularity pull splatam.sif docker://nkeetha/splatam:v1
-singularity instance start --nv splatam.sif splatam
-singularity run --nv instance://splatam
-cd <path/to/SplaTAM/>
-pip install virtualenv --user
-mkdir venv
-cd venv
-virtualenv --system-site-packages splatam
-source ./splatam/bin/activate
+bash docker/build.sh
+bash docker/run.sh
+cd /ws/SplaTAM/
+python3.10 -m venv --system-site-packages .splatam
+source ./.splatam/bin/activate
 pip install -r venv_requirements.txt
 ```
 
