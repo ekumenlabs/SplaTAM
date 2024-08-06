@@ -132,7 +132,7 @@ def plot_rgbd_silhouette(color, depth, rastered_color, rastered_depth, presence_
         axs[0, 2].imshow(presence_sil_mask, cmap='gray')
         axs[0, 2].set_title("Rasterized Silhouette")
     diff_depth_l1 = diff_depth_l1.cpu().squeeze(0)
-    axs[1, 2].imshow(diff_depth_l1, cmap='jet', vmin=0, vmax=6)
+    axs[1, 2].imshow(diff_depth_l1.permute(1, 2, 0), cmap='jet', vmin=0, vmax=6)
     axs[1, 2].set_title("Diff Depth L1")
     for ax in axs.flatten():
         ax.axis('off')
@@ -435,6 +435,7 @@ def eval(dataset, final_params, num_frames, eval_dir, sil_thres,
 
         # Process RGB-D Data
         color = color.permute(2, 0, 1) / 255 # (H, W, C) -> (C, H, W)
+        depth = depth.flatten(start_dim=2)
         depth = depth.permute(2, 0, 1) # (H, W, C) -> (C, H, W)
 
         if time_idx == 0:

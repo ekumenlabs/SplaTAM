@@ -107,9 +107,9 @@ def get_pointcloud(color, depth, intrinsics, w2c, transform_pts=True,
 
     # Select points based on mask
     if mask is not None:
-        point_cld = point_cld[mask]
+        #point_cld = point_cld[mask]
         if compute_mean_sq_dist:
-            mean3_sq_dist = mean3_sq_dist[mask]
+            mean3_sq_dist = mean3_sq_dist[mask[::3]]
 
     if compute_mean_sq_dist:
         return point_cld, mean3_sq_dist
@@ -173,6 +173,8 @@ def initialize_first_timestep(dataset, num_frames, scene_radius_depth_ratio,
 
     # Process RGB-D Data
     color = color.permute(2, 0, 1) / 255 # (H, W, C) -> (C, H, W)
+    # Flatten to match expected dimensions
+    depth = torch.flatten(depth, start_dim=2)
     depth = depth.permute(2, 0, 1) # (H, W, C) -> (C, H, W)
     
     # Process Camera Parameters
@@ -186,6 +188,8 @@ def initialize_first_timestep(dataset, num_frames, scene_radius_depth_ratio,
         # Get Densification RGB-D Data & Camera Parameters
         color, depth, densify_intrinsics, _ = densify_dataset[0]
         color = color.permute(2, 0, 1) / 255 # (H, W, C) -> (C, H, W)
+        # Flatten to match expected dimensions
+        depth = torch.flatten(depth, start_dim=2)
         depth = depth.permute(2, 0, 1) # (H, W, C) -> (C, H, W)
         densify_intrinsics = densify_intrinsics[:3, :3]
         densify_cam = setup_camera(color.shape[2], color.shape[1], densify_intrinsics.cpu().numpy(), w2c.detach().cpu().numpy())
@@ -281,7 +285,7 @@ def get_loss(params, curr_data, variables, iter_time_idx, loss_weights, use_sil_
     
     # RGB Loss
     if tracking and (use_sil_for_loss or ignore_outlier_depth_loss):
-        color_mask = torch.tile(mask, (3, 1, 1))
+        color_mask = torch.tile(mask, (1, 1, 1))
         color_mask = color_mask.detach()
         losses['im'] = torch.abs(curr_data['im'] - im)[color_mask].sum()
     elif tracking:
@@ -404,6 +408,7 @@ def add_new_gaussians(params, variables, curr_data, sil_thres,
         curr_w2c[:3, 3] = curr_cam_tran
         valid_depth_mask = (curr_data['depth'][0, :, :] > 0)
         non_presence_mask = non_presence_mask & valid_depth_mask.reshape(-1)
+        non_presence_mask = torch.tile(non_presence_mask, (3,))
         new_pt_cld, mean3_sq_dist = get_pointcloud(curr_data['im'], curr_data['depth'], curr_data['intrinsics'], 
                                     curr_w2c, mask=non_presence_mask, compute_mean_sq_dist=True,
                                     mean_sq_dist_method=mean_sq_dist_method)
@@ -632,6 +637,8 @@ def rgbd_slam(config: dict):
                 curr_w2c[:3, 3] = curr_cam_tran
                 # Initialize Keyframe Info
                 color = color.permute(2, 0, 1) / 255
+                # Flatten to match expected dimensions
+                depth = torch.flatten(depth, start_dim=2)
                 depth = depth.permute(2, 0, 1)
                 curr_keyframe = {'id': time_idx, 'est_w2c': curr_w2c, 'color': color, 'depth': depth}
                 # Add to keyframe list
@@ -647,6 +654,8 @@ def rgbd_slam(config: dict):
         gt_w2c = torch.linalg.inv(gt_pose)
         # Process RGB-D Data
         color = color.permute(2, 0, 1) / 255
+        # Flatten to match expected dimensions
+        depth = torch.flatten(depth, start_dim=2)
         depth = depth.permute(2, 0, 1)
         gt_w2c_all_frames.append(gt_w2c)
         curr_gt_w2c = gt_w2c_all_frames
@@ -782,6 +791,7 @@ def rgbd_slam(config: dict):
                     # Load RGBD frames incrementally instead of all frames
                     densify_color, densify_depth, _, _ = densify_dataset[time_idx]
                     densify_color = densify_color.permute(2, 0, 1) / 255
+                    densify_depth = torch.flatten(densify_depth, start_dim=2)
                     densify_depth = densify_depth.permute(2, 0, 1)
                     densify_curr_data = {'cam': densify_cam, 'im': densify_color, 'depth': densify_depth, 'id': time_idx, 
                                  'intrinsics': densify_intrinsics, 'w2c': first_frame_w2c, 'iter_gt_w2c_list': curr_gt_w2c}
