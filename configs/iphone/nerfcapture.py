@@ -1,12 +1,19 @@
 import os
 from os.path import join as p_join
 
+parser.add_argument("dataset", type=str, help="Path to NeRF Capture dataset")
+parser.add_argument("frames", type=int, help="Captured frames")
+
+args = parser.parse_args()
+if (args.dataset is None or args.frames == 0)
+    exit()
+
 primary_device = "cuda:0"
 seed = 0
 
-base_dir = "./experiments/iPhone_Captures" # Root Directory to Save iPhone Dataset
-scene_name = "offline_demo" # Scan Name
-num_frames = 10 # Desired number of frames to capture
+bsae_dir = os.path.dirname(dataset) # Root Directory to Save iPhone Dataset
+scene_name = os.path.basename(os.path.normpath(dataset))
+num_frames = args.frames # Desired number of frames to capture
 depth_scale = 10.0 # Depth Scale used when saving depth
 overwrite = False # Rewrite over dataset if it exists
 
@@ -26,7 +33,7 @@ mapping_iters = 60
 
 config = dict(
     workdir=f"./{base_dir}/{scene_name}",
-    run_name="SplaTAM_iPhone",
+    run_name="output",
     overwrite=overwrite,
     depth_scale=depth_scale,
     num_frames=num_frames,
