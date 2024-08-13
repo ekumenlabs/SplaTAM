@@ -107,9 +107,9 @@ def get_pointcloud(color, depth, intrinsics, w2c, transform_pts=True,
 
     # Select points based on mask
     if mask is not None:
-        #point_cld = point_cld[mask]
+        point_cld = point_cld[mask]
         if compute_mean_sq_dist:
-            mean3_sq_dist = mean3_sq_dist[mask[::3]]
+            mean3_sq_dist = mean3_sq_dist[mask]
 
     if compute_mean_sq_dist:
         return point_cld, mean3_sq_dist
@@ -197,7 +197,8 @@ def initialize_first_timestep(dataset, num_frames, scene_radius_depth_ratio,
         densify_intrinsics = intrinsics
 
     # Get Initial Point Cloud (PyTorch CUDA Tensor)
-    mask = (depth > 0) # Mask out invalid depth values
+    depth_z = depth[0] # Take only the 1st channel
+    mask = (depth_z > 0) # Mask out invalid depth values
     mask = mask.reshape(-1)
     init_pt_cld, mean3_sq_dist = get_pointcloud(color, depth, densify_intrinsics, w2c, 
                                                 mask=mask, compute_mean_sq_dist=True, 
@@ -408,7 +409,6 @@ def add_new_gaussians(params, variables, curr_data, sil_thres,
         curr_w2c[:3, 3] = curr_cam_tran
         valid_depth_mask = (curr_data['depth'][0, :, :] > 0)
         non_presence_mask = non_presence_mask & valid_depth_mask.reshape(-1)
-        non_presence_mask = torch.tile(non_presence_mask, (3,))
         new_pt_cld, mean3_sq_dist = get_pointcloud(curr_data['im'], curr_data['depth'], curr_data['intrinsics'], 
                                     curr_w2c, mask=non_presence_mask, compute_mean_sq_dist=True,
                                     mean_sq_dist_method=mean_sq_dist_method)
