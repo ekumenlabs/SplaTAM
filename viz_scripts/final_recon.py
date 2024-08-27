@@ -186,6 +186,9 @@ def visualize(scene_path, cfg):
     pcd = o3d.geometry.PointCloud()
     pcd.points = init_pts
     pcd.colors = init_cols
+    path = cfg['output']
+    o3d.io.write_point_cloud(path, pcd);
+    print("PCD written at: ", path);
     vis.add_geometry(pcd)
 
     w = cfg['viz_w']
@@ -279,6 +282,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("experiment", type=str, help="Path to experiment file")
+    parser.add_argument("pointcloud", type=str, help="Path to write output pointcloud file")
 
     args = parser.parse_args()
 
@@ -296,6 +300,7 @@ if __name__ == "__main__":
     else:
         scene_path = experiment.config["scene_path"]
     viz_cfg = experiment.config["viz"]
+    viz_cfg["output"] = args.pointcloud
 
     # Visualize Final Reconstruction
     visualize(scene_path, viz_cfg)
