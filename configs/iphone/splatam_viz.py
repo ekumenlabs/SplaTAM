@@ -4,7 +4,7 @@ from os.path import join as p_join
 seed = 0
 
 config = dict(
-    scene_path='./experiments/iPhone_Captures/splatam_demo/params.npz',
+    scene_path='./output/hq-hamilton-test-02/bad-output/params.npz',
     seed=seed,
     viz=dict(
         render_mode='color', # ['color', 'depth' or 'centers']

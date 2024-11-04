@@ -2,7 +2,7 @@
 
 # check rmem_max and wmem_max, and increase size if necessary
 if [ "$#" -ne 2 ]; then
-    echo "Usage: bash_scripts/nerfcapture2dataset.bash <config_file> <dataset_dir>"
+    echo "Usage: bash_scripts/splatam.bash <config_file> <dataset_dir>"
     exit
 fi
 
@@ -29,12 +29,10 @@ else
     sudo sysctl -w net.core.wmem_max=2147483647
 fi
 
-LINES=$(ls -l $2/images | wc -l)
-FRAMES=$(($LINES / 2))
+FRAMES=$(ls -l $2/rgb | wc -l)
 if [ -z FRAMES ] || [ FRAMES -eq 0 ]; then
-    echo "Not enough frames at $2/images!"
+    echo "Not enough frames at $2/rgb!"
     exit
 fi
 
-# Capture Dataset
-python3 scripts/nerfcapture2dataset.py --config $1 --dataset $2 --frames $FRAMES
+python3 scripts/splatam.py --config $1 --dataset $2 --frames $FRAMES
