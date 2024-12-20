@@ -127,6 +127,7 @@ if __name__ == "__main__":
         os.path.basename(args.config), args.config
     ).load_module()
 
+    # TODO(Santoi): Improve config sharing between scripts.
     config = experiment.config
     config['workdir'] = args.base_dir + "/" + args.scene
     config['data']['num_frames'] = config['num_frames'] = args.frames / 3 # SplaTAM usually stars to go nuts after 1/3 of the dataset frames.

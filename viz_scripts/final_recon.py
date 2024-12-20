@@ -289,11 +289,12 @@ if __name__ == "__main__":
         os.path.basename(args.experiment), args.experiment
     ).load_module()
 
-    seed_everything(seed=experiment.config["seed"])
+    # TODO(Santoi): Improve config sharing between scripts.
     experiment.config['workdir'] = args.base_dir + "/" + args.scene
     experiment.config['data']['num_frames'] = experiment.config['num_frames'] = int(args.frames / 3) # SplaTAM usually stars to go nuts after 1/3 of the dataset frames.
     experiment.config['data']['basedir'] = experiment.config['basedir'] = args.base_dir
     experiment.config['data']['sequence'] = experiment.config['scene_name'] = args.scene
+    seed_everything(seed=experiment.config["seed"])
 
     if "scene_path" not in experiment.config:
         results_dir = os.path.join(
