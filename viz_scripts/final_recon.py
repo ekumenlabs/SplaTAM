@@ -279,6 +279,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("experiment", type=str, help="Path to experiment file")
+    parser.add_argument("--base_dir", type=str, help="Path to the dataset.")
+    parser.add_argument("--scene", type=str, help="Name of the NeRFCapture dataset. Usually has a _nerfcapture suffix.")
+    parser.add_argument("--frames", type=int, help="Amount of frames to process.")
 
     args = parser.parse_args()
 
@@ -287,6 +290,10 @@ if __name__ == "__main__":
     ).load_module()
 
     seed_everything(seed=experiment.config["seed"])
+    experiment.config['workdir'] = args.base_dir + "/" + args.scene
+    experiment.config['data']['num_frames'] = experiment.config['num_frames'] = int(args.frames / 3) # SplaTAM usually stars to go nuts after 1/3 of the dataset frames.
+    experiment.config['data']['basedir'] = experiment.config['basedir'] = args.base_dir
+    experiment.config['data']['sequence'] = experiment.config['scene_name'] = args.scene
 
     if "scene_path" not in experiment.config:
         results_dir = os.path.join(

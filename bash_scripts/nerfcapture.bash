@@ -30,6 +30,7 @@ scene="$(basename $2)_nerfcapture"
 echo $base_dir $scene
 
 # Convert Spectacular AI dataset to NeRF Capture.
+echo "Exporting dataset to NeRF Capture format..."
 python3 spectacularAI-sdk/python/mapping/replay_to_nerf.py $2 \
     --format=nerfcapture --fast \
     --image_format=png \
@@ -39,16 +40,18 @@ python3 spectacularAI-sdk/python/mapping/replay_to_nerf.py $2 \
 
 frames=$(ls -l ${base_dir}/${scene}/rgb | wc -l)
 if [ -z $frames ] || [ $frames -eq 0 ]; then
-    echo "Not enough frames at $base_dir/$scene/rgb!"
+    echo "ERROR: Not enough frames at $base_dir/$scene/rgb!"
     exit
 fi
 
+echo "Building SplaTAM expected directories..."
 python3 scripts/nerfcapture2dataset.py --config $1 --base_dir $base_dir --scene $scene --frames $frames
 
 # Run SplaTAM
+echo "Running SplaTAM..."
 python3 scripts/splatam.py $1 --base_dir $base_dir --scene $scene --frames $frames
 
-exit 0
-
 # Visualize SplaTAM Output
-python3 viz_scripts/final_recon.py $1
+echo "Running visualizer..."
+python3 viz_scripts/final_recon.py $1 --base_dir $base_dir --scene $scene --frames $frames
+
