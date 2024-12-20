@@ -41,7 +41,7 @@
       <a href="#installation">Installation</a>
     </li>
     <li>
-      <a href="#demo">Online Demo</a>
+      <a href="#demo">Offline Demo</a>
     </li>
     <li>
       <a href="#usage">Usage</a>
@@ -66,7 +66,6 @@
 
 ## Installation
 
-##### (Recommended)
 SplaTAM has been benchmarked with Python 3.10, Torch 1.12.1 & CUDA=11.6. However, Torch 1.12 is not a hard requirement and the code has also been tested with other versions of Torch and CUDA such as Torch 2.3.0 & CUDA 12.1.
 
 The simplest way to install all dependences is to use [anaconda](https://www.anaconda.com/) and [pip](https://pypi.org/project/pip/) in the following steps: 
@@ -86,6 +85,7 @@ conda activate splatam
 ``` -->
 
 #### Docker Setup
+##### (Ekumen Recommended)
 
 We also provide a docker image. We recommend using a venv to run the code inside a docker image:
 
@@ -101,60 +101,38 @@ pip install -r venv_requirements.txt
 
 ## Demo
 
-### Online
-
-You can SplaTAM your own environment with an iPhone or LiDAR-equipped Apple device by downloading and using the <a href="https://apps.apple.com/au/app/nerfcapture/id6446518379">NeRFCapture</a> app.
-
-Make sure that your iPhone and PC are connected to the same WiFi network, and then run the following command:
-
- ```bash
-bash bash_scripts/online_demo.bash configs/iphone/online_demo.py
-```
-
-On the app, keep clicking send for successive frames. Once the capturing of frames is done, the app will disconnect from the PC and check out SplaTAM's interactive rendering of the reconstruction on your PC! Here are some cool example results:
-
-<p align="center">
-  <a href="">
-    <img src="./assets/collage.gif" alt="Logo" width="75%">
-  </a>
-</p>
-
 ### Offline
 
-You can also first capture the dataset and then run SplaTAM offline on the dataset with the following command:
+You can first capture the dataset with Spectacular AI tool and then run SplaTAM offline on the recorded dataset with the following command:
 
 ```bash
-bash bash_scripts/nerfcapture.bash configs/iphone/nerfcapture.py
+bash bash_scripts/nerfcapture.bash configs/iphone/nerfcapture.py <spectacularAI_dataset_location>
 ```
 
 ### Dataset Collection
 
-If you would like to only capture your own iPhone dataset using the NeRFCapture app, please use the following command:
-
-```bash
-bash bash_scripts/nerfcapture2dataset.bash configs/iphone/dataset.py
-```
+If you would like to only capture your own iPhone dataset, please use the Spectacular AI app.
 
 ## Usage
 
-We will use the iPhone dataset as an example to show how to use SplaTAM. The following steps are similar for other datasets.
-
-To run SplaTAM, please use the following command:
+If you already converted the dataset to the SplaTAM expected input, to run SplaTAM, please use the following command:
 
 ```bash
-python scripts/splatam.py configs/iphone/splatam.py
+python scripts/splatam.py configs/iphone/splatam.py --base_dir <dataset_parent_dir> --scene <dataset_dir> --frames <dataset_frames_count>
 ```
 
 To visualize the final interactive SplaTAM reconstruction, please use the following command:
 
 ```bash
-python viz_scripts/final_recon.py configs/iphone/splatam.py
+python viz_scripts/final_recon.py configs/iphone/splatam.py --base_dir <dataset_parent_dir> --scene <dataset_dir> --frames <dataset_frames_count>
 ```
+
+### Not supported by Ekumen
 
 To visualize the SplaTAM reconstruction in an online fashion, please use the following command:
 
 ```bash
-python viz_scripts/online_recon.py configs/iphone/splatam.py
+python viz_scripts/online_recon.py configs/iphone/splatam.py --base_dir <dataset_parent_dir> --scene <dataset_dir> --frames <dataset_frames_count>
 ```
 
 To export the splats to a .ply file, please use the following command:
