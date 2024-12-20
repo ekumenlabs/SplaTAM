@@ -24,7 +24,8 @@ import numpy as np
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="./configs/iphone/nerfcapture.py", type=str, help="Path to config file.")
-    parser.add_argument("--dataset", type=str, help="Path to NeRFCapture dataset.")
+    parser.add_argument("--base_dir", type=str, help="Path to the dataset.")
+    parser.add_argument("--scene", type=str, help="Name of the NeRFCapture dataset. Usually has a _nerfcapture suffix.")
     parser.add_argument("--frames", type=int, help="Amount of frames to process.")
     return parser.parse_args()
 
@@ -126,14 +127,14 @@ if __name__ == "__main__":
         os.path.basename(args.config), args.config
     ).load_module()
 
-    transform_file = os.path.join(args.config.workdir, 'transforms.json')
+    config = experiment.config
+    config['workdir'] = args.base_dir + "/" + args.scene
+    config['data']['num_frames'] = config['num_frames'] = args.frames / 3 # SplaTAM usually stars to go nuts after 1/3 of the dataset frames.
+    config['data']['base_dir'] = config['base_dir'] = args.base_dir
+    config['data']['sequence'] = config['scene_name'] = args.scene
+
+    transform_file = os.path.join(config['workdir'], 'transforms.json')
     with open(transform_file, 'r') as f:
         json_data = json.load(f)
 
-    dataset_dir = Path(args.dataset)
-    config['data'] = dataset_dir.parent.absolute()
-
-    config = experiment.config
-    config['workdir'] = args.dataset
-    config['data']['num_frames'] = config['num_frames'] = args.frames / 3 # SplaTAM usually stars to go nuts after 1/3 of the dataset frames.
     dataset_capture_loop(json_data, Path(config['workdir']), config['overwrite'], config['num_frames'], config['depth_scale'])
