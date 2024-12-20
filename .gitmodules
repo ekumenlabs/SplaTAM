@@ -4,3 +4,4 @@
 [submodule "spectacularAI-sdk"]
 	path = spectacularAI-sdk
 	url = https://github.com/SpectacularAI/sdk-examples
+	branch = nerfcapture-export
