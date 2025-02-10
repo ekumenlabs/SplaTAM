@@ -59,7 +59,6 @@ def get_dataset(config_dict, basedir, sequence, **kwargs):
     elif config_dict["dataset_name"].lower() in ["scannetpp"]:
         return ScannetPPDataset(basedir, sequence, **kwargs)
     elif config_dict["dataset_name"].lower() in ["nerfcapture"]:
-        print("AAAAAA: ", basedir, sequence)
         return NeRFCaptureDataset(basedir, sequence, **kwargs)
     else:
         raise ValueError(f"Unknown dataset name {config_dict['dataset_name']}")
