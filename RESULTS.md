@@ -47,9 +47,10 @@ In order to run SplaTAM with Spectacular AI recorded data, the first step was to
 
 ### NeRF Capture dataset
 
-To get the results, SplaTAM provides the [nerfcapture2dataset](https://github.com/spla-tam/SplaTAM/blob/main/scripts/nerfcapture2dataset.py) script to process the NeRF Capture output into the expected directory structure. This script works with the Online mode and should be modified to work with the Offline mode directory structure.
+To get the results, SplaTAM provides the [nerfcapture2dataset](https://github.com/ekumenlabs/SplaTAM/blob/main/scripts/nerfcapture2dataset.py) script to process the NeRF Capture output into the expected directory structure. This script works with the Online mode and should be modified to work with the Offline mode directory structure.
 
-After running [splatam](https://github.com/spla-tam/SplaTAM/blob/main/scripts/splatam.py) algorithm, the output is saved into a paramz.nzp format that can then be visualized with open3d viewer to get ahold of the desired point cloud, alongside a metrics plot showing the PSNR and the captured depth of each frame, and additionally, each output frame rasterized.
+After running [splatam](https://github.com/ekumenlabs/SplaTAM/blob/main/scripts/splatam.py) algorithm, the output is saved into an params.npz file format that can then be visualized with open3d viewer to get ahold of the desired point cloud, alongside a metrics plot showing the PSNR and the captured depth of each frame, and additionally, each output frame rasterized.
+See [NpzFile](https://numpy.org/devdocs/reference/generated/numpy.lib.npyio.NpzFile.html#numpy.lib.npyio.NpzFile) for info on `npz` format and how to load it.
 
 ### Results
 
