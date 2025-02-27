@@ -10,8 +10,8 @@ num_frames = 10 # Desired number of frames to capture
 depth_scale = 10.0 # Depth Scale used when saving depth
 overwrite = False # Rewrite over dataset if it exists
 
-full_res_width = 1920
-full_res_height = 1440
+full_res_width = 640
+full_res_height = 480
 downscale_factor = 2.0
 densify_downscale_factor = 4.0
 
